@@ -5,15 +5,16 @@ module RedmineClient
 
     def decode(json)
       decoded = ActiveResource::Formats::JsonFormat.decode(json)
-      return decoded unless decoded.is_a? Hash
 
-      # Because we don't know which class we're working with, we try all.
-      key = RedmineClient::Base::descendants.select do |subclass|
-        decoded.has_key? (subclass.name.split('::').last || '').tableize
+      if decoded.is_a? Hash
+        # Because we don't know which class we're working with, we try all.
+        keys = Base::descendants.map{|subclass|(subclass.name.split('::').last || '').tableize}
+        keys.each do |key|
+          return decoded[key] if decoded.has_key? key
+        end
       end
-      key = key.first
 
-      key.nil? ? decoded : decoded['issues']
+      decoded
     end
   end
 
