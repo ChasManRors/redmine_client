@@ -14,5 +14,7 @@ module RedmineClient
     end
     class FixedVersion < RedmineClient::Base
     end
+    class CustomField < RedmineClient::Base
+    end
   end
 end
